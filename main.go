@@ -12,7 +12,6 @@ var mu = sync.Mutex{}
 type Tweet struct {
 	Username string `json:"username"`
 	Tweet    string `json:"tweet"`
-	Body     string `json:"body"`
 	HashTag  string `json:"hash_tag"`
 }
 
@@ -40,19 +39,14 @@ func twitterFeed(w http.ResponseWriter, r *http.Request) {
 
 func fetchTweets() []Tweet {
 	return []Tweet{
-		{"PeterMcKinnon", "Happy New Year 🎆", "Happy New Year 🎆", "#2022"},
-		{"Programmer", "I ❤️ GoLang", "I ❤️ GoLang", "#coding"},
-		{"DancingPanda", "I Love 💃🏼 Dancing", "I Love 💃🏼 Dancing", ""},
-		{"GingerBread", "I hate 🥛", "I hate 🥛", ""},
+		{"PeterMcKinnon", "Happy New Year 🎆", "#2022"},
+		{"Programmer", "I ❤️ GoLang", "#coding"},
+		{"DancingPanda", "I Love 💃🏼 Dancing", ""},
+		{"GingerBread", "I hate 🥛", ""},
 	}
 }
 
 func persistTweet(tweet Tweet) {
-	if len(tweet.Body) != 0 {
-		tweet.Tweet = tweet.Body
-	} else {
-		tweet.Body = tweet.Tweet
-	}
 	mu.Lock()
 	defer mu.Unlock()
 	tweets = append(tweets, tweet)
