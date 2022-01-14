@@ -2,24 +2,21 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/go-playground/validator/v10"
 	"net/http"
 	"sync"
 )
 
-var validate = validator.New()
 var tweets = fetchTweets()
 var mu = sync.Mutex{}
 
 type Tweet struct {
-	Username string `json:"username" validate:"required"`
+	Username string `json:"username"`
 	Tweet    string `json:"tweet"`
 	Body     string `json:"body"`
 	HashTag  string `json:"hash_tag"`
 }
 
 func main() {
-	validate.RegisterStructValidation(TweetStructValidation, Tweet{})
 	http.HandleFunc("/feed", twitterFeed)
 	http.ListenAndServe(":3000", nil)
 }
@@ -34,11 +31,6 @@ func twitterFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = validate.Struct(req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
-		return
-	}
 	persistTweet(req)
 
 	js, _ := json.Marshal(tweets)
@@ -66,11 +58,3 @@ func persistTweet(tweet Tweet) {
 	tweets = append(tweets, tweet)
 }
 
-func TweetStructValidation(sl validator.StructLevel) {
-	tweet := sl.Current().Interface().(Tweet)
-
-	if len(tweet.Tweet) == 0 && len(tweet.Body) == 0 {
-		sl.ReportError(tweet.Tweet, "tweet", "Tweet", "tweet_or_body", "")
-		sl.ReportError(tweet.Body, "body", "Body", "tweet_or_body", "")
-	}
-}
