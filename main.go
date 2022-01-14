@@ -12,7 +12,6 @@ var mu = sync.Mutex{}
 type Tweet struct {
 	Username string `json:"username"`
 	Tweet    string `json:"tweet"`
-	HashTag  string `json:"hash_tag"`
 }
 
 func main() {
@@ -22,6 +21,7 @@ func main() {
 
 func twitterFeed(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
 
 	var req Tweet
 	err := decoder.Decode(&req)
@@ -39,10 +39,10 @@ func twitterFeed(w http.ResponseWriter, r *http.Request) {
 
 func fetchTweets() []Tweet {
 	return []Tweet{
-		{"PeterMcKinnon", "Happy New Year 🎆", "#2022"},
-		{"Programmer", "I ❤️ GoLang", "#coding"},
-		{"DancingPanda", "I Love 💃🏼 Dancing", ""},
-		{"GingerBread", "I hate 🥛", ""},
+		{"PeterMcKinnon", "Happy New Year 🎆"},
+		{"Programmer", "I ❤️ GoLang"},
+		{"DancingPanda", "I Love 💃🏼 Dancing"},
+		{"GingerBread", "I hate 🥛"},
 	}
 }
 
