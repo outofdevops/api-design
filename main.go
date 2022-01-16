@@ -51,4 +51,3 @@ func persistTweet(tweet Tweet) {
 	defer mu.Unlock()
 	tweets = append(tweets, tweet)
 }
-
