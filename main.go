@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 )
@@ -17,6 +18,7 @@ type Tweet struct {
 }
 
 func main() {
+	fmt.Println("Starting Tweet API v1.2 - Listening...")
 	http.HandleFunc("/feed", twitterFeed)
 	http.ListenAndServe(":3000", nil)
 }
@@ -57,4 +59,3 @@ func persistTweet(tweet Tweet) {
 	defer mu.Unlock()
 	tweets = append(tweets, tweet)
 }
-
